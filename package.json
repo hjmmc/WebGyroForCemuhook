@@ -1,0 +1,32 @@
+{
+  "name": "web-gyro-for-cemuhook",
+  "version": "1.0.0",
+  "description": "Use web ondevicemotion event data provided to cemuhook",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/denismr/iOSGyroForCemuhook.git"
+  },
+  "keywords": [
+    "ios",
+    "gyro",
+    "cemuhook",
+    "cemu",
+    "websocket"
+  ],
+  "author": "hjmmc (https://github.com/hjmmc/WebGyroForCemuhook)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hjmmc/WebGyroForCemuhook/issues"
+  },
+  "homepage": "https://github.com/hjmmc/WebGyroForCemuhook#readme",
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "crc": "^3.5.0",
+    "long": "^3.2.0",
+    "ws": "^4.0.0"
+  }
+}
