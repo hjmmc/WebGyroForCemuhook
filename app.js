@@ -1,13 +1,13 @@
-require('babel-polyfill');
-const WebSocket = require('ws');
-const dgram = require('dgram');
-const crc = require('crc');
-const long = require('long');
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
+require("babel-polyfill");
+const WebSocket = require("ws");
+const dgram = require("dgram");
+const crc = require("crc");
+const long = require("long");
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
 
-const server = dgram.createSocket('udp4');
+const server = dgram.createSocket("udp4");
 
 function char(a) {
   return a.charCodeAt(0);
@@ -21,7 +21,7 @@ const MessageType = {
   DSUS_PortInfo: 0x100001,
   DSUC_PadDataReq: 0x100002,
   DSUS_PadDataRsp: 0x100002
-}
+};
 const serverID = 0 + Math.floor(Math.random() * 9007199254740992);
 console.log(`serverID: ${serverID}`);
 
@@ -33,17 +33,17 @@ const clientTimeoutLimit = 5000;
 
 ///////////////////////////////////////////////////
 
-function BeginPacket(data,dlen) {
+function BeginPacket(data, dlen) {
   let index = 0;
-  data[index++] = char('D');
-  data[index++] = char('S');
-  data[index++] = char('U');
-  data[index++] = char('S');
+  data[index++] = char("D");
+  data[index++] = char("S");
+  data[index++] = char("U");
+  data[index++] = char("S");
 
   data.writeUInt16LE(maxProtocolVer, index, true);
   index += 2;
 
-  data.writeUInt16LE(dlen||data.length-16, index, true);
+  data.writeUInt16LE(dlen || data.length - 16, index, true);
   index += 2;
 
   data.writeUInt32LE(0, index, true);
@@ -61,58 +61,82 @@ function FinishPacket(data) {
 
 function SendPacket(client, data) {
   let buffer = new Buffer(16);
-  let index = BeginPacket(buffer,data.length);
+  let index = BeginPacket(buffer, data.length);
   // buffer.fill(data,index);
-  buffer=Buffer.concat([buffer,data])
+  buffer = Buffer.concat([buffer, data]);
   FinishPacket(buffer);
-  server.send(buffer,0,buffer.length, client.port, client.address, (error, bytes) => {
-    if (error) {
-      console.log("Send packet error");
-      console.log(error.message);
+  server.send(
+    buffer,
+    0,
+    buffer.length,
+    client.port,
+    client.address,
+    (error, bytes) => {
+      if (error) {
+        console.log("Send packet error");
+        console.log(error.message);
+      } else if (bytes !== buffer.length) {
+        console.log(
+          `failed to completely send all of buffer. Sent: ${bytes}. Buffer length: ${buffer.length}`
+        );
+      }
     }
-    else if (bytes !== buffer.length) {
-        console.log(`failed to completely send all of buffer. Sent: ${bytes}. Buffer length: ${buffer.length}`);
-    }
-  });
+  );
 }
-
 
 ///////////////////////////////////////////////////
 
-server.on('error', (err) => {
+server.on("error", err => {
   console.log(`server error:\n${err.stack}`);
   server.close();
 });
 
-server.on('listening', () => {
+server.on("listening", () => {
   const address = server.address();
-  console.log(`UDP Pad motion data provider listening ${address.address}:${address.port}`);
+  console.log(
+    `UDP Pad motion data provider listening ${address.address}:${address.port}`
+  );
 });
 
-server.on('message', (data, rinfo) => {
-  if (!(data[0] === char('D') && data[1] === char('S') && data[2] === char('U') && data[3] === char('C'))) return;
+server.on("message", (data, rinfo) => {
+  if (
+    !(
+      data[0] === char("D") &&
+      data[1] === char("S") &&
+      data[2] === char("U") &&
+      data[3] === char("C")
+    )
+  )
+    return;
   let index = 4;
 
-  let protocolVer = data.readUInt16LE(index); index += 2;
+  let protocolVer = data.readUInt16LE(index);
+  index += 2;
 
-  let packetSize = data.readUInt16LE(index); index += 2;
+  let packetSize = data.readUInt16LE(index);
+  index += 2;
 
   let receivedCrc = data.readUInt32LE(index);
-  data[index++] = 0; data[index++] = 0;
-  data[index++] = 0; data[index++] = 0;
+  data[index++] = 0;
+  data[index++] = 0;
+  data[index++] = 0;
+  data[index++] = 0;
 
   let computedCrc = crc.crc32(data);
 
   // if (receivedCrc !== computedCrc)
 
-  let clientId = data.readUInt32LE(index); index += 4;
-  let msgType = data.readUInt32LE(index); index += 4;
+  let clientId = data.readUInt32LE(index);
+  index += 4;
+  let msgType = data.readUInt32LE(index);
+  index += 4;
 
   if (msgType == MessageType.DSUC_VersionReq) {
     console.log("Version request ignored.");
-  } else if (msgType ==  MessageType.DSUC_ListPorts) {
+  } else if (msgType == MessageType.DSUC_ListPorts) {
     // console.log("List ports request.");
-    let numOfPadRequests = data.readInt32LE(index); index += 4;
+    let numOfPadRequests = data.readInt32LE(index);
+    index += 4;
     for (let i = 0; i < numOfPadRequests; i++) {
       let requestIndex = data[index + i];
       if (requestIndex !== 0) continue;
@@ -127,25 +151,32 @@ server.on('message', (data, rinfo) => {
       // mac address
       for (let j = 0; j < 5; j++) {
         outBuffer[outIndex++] = 0;
-      } outBuffer[outIndex++] = 0xFF; // 00:00:00:00:00:FF
+      }
+      outBuffer[outIndex++] = 0xff; // 00:00:00:00:00:FF
       // outBuffer[outIndex++] = 0x00; // battery (none)
-      outBuffer[outIndex++] = 0xEF; // battery (charged)
+      outBuffer[outIndex++] = 0xef; // battery (charged)
       outBuffer[outIndex++] = 0; // dunno (probably "is active")
       SendPacket(rinfo, outBuffer);
     }
   } else if (msgType == MessageType.DSUC_PadDataReq) {
     let flags = data[index++];
     let idToRRegister = data[index++];
-    let macToRegister = ['', '', '', '', '', ''];
-    for (let i = 0; i < macToRegister.length; i++ , index++) {
-      macToRegister[i] = `${data[index] < 15 ? '0' : ''}${data[index].toString(16)}`;
+    let macToRegister = ["", "", "", "", "", ""];
+    for (let i = 0; i < macToRegister.length; i++, index++) {
+      macToRegister[i] = `${data[index] < 15 ? "0" : ""}${data[index].toString(
+        16
+      )}`;
     }
-    macToRegister = macToRegister.join(':');
-    
+    macToRegister = macToRegister.join(":");
+
     // console.log(`Pad data request (${flags}, ${idToRRegister}, ${macToRegister})`);
 
     // There is only one controller, so
-    if (flags == 0 || (idToRRegister == 0 && flags & 0x01 !== 0) || (macToRegister == '00:00:00:00:00:ff' && flags & 0x02 !== 0)) {
+    if (
+      flags == 0 ||
+      (idToRRegister == 0 && flags & (0x01 !== 0)) ||
+      (macToRegister == "00:00:00:00:00:ff" && flags & (0x02 !== 0))
+    ) {
       connectedClient = rinfo;
       lastRequestAt = Date.now();
     }
@@ -154,7 +185,8 @@ server.on('message', (data, rinfo) => {
 
 function Report(motionTimestamp, accelerometer, gyro) {
   let client = connectedClient;
-  if (client === null || Date.now() - lastRequestAt > clientTimeoutLimit) return;
+  if (client === null || Date.now() - lastRequestAt > clientTimeoutLimit)
+    return;
 
   let outBuffer = new Buffer(100);
   let outIndex = BeginPacket(outBuffer);
@@ -168,16 +200,17 @@ function Report(motionTimestamp, accelerometer, gyro) {
 
   // mac address
   for (let i = 0; i < 5; i++) {
-      outBuffer[outIndex++] = 0x00;
-  } outBuffer[outIndex++] = 0xFF; // 00:00:00:00:00:FF
+    outBuffer[outIndex++] = 0x00;
+  }
+  outBuffer[outIndex++] = 0xff; // 00:00:00:00:00:FF
 
-  outBuffer[outIndex++] = 0xEF; // battery (charged)
+  outBuffer[outIndex++] = 0xef; // battery (charged)
   outBuffer[outIndex++] = 0x01; // is active (true)
 
   outBuffer.writeUInt32LE(packetCounter++, outIndex, true);
   outIndex += 4;
 
-  outBuffer[outIndex]   = 0x00; // left, down, right, up, options, R3, L3, share
+  outBuffer[outIndex] = 0x00; // left, down, right, up, options, R3, L3, share
   outBuffer[++outIndex] = 0x00; // square, cross, circle, triangle, r1, l1, r2, l2
   outBuffer[++outIndex] = 0x00; // PS
   outBuffer[++outIndex] = 0x00; // Touch
@@ -239,15 +272,23 @@ function Report(motionTimestamp, accelerometer, gyro) {
   outIndex += 4;
 
   FinishPacket(outBuffer);
-  server.send(outBuffer,0,outBuffer.length, client.port, client.address, (error, bytes) => {
-    if (error) {
-      console.log("Send packet error");
-      console.log(error.message);
+  server.send(
+    outBuffer,
+    0,
+    outBuffer.length,
+    client.port,
+    client.address,
+    (error, bytes) => {
+      if (error) {
+        console.log("Send packet error");
+        console.log(error.message);
+      } else if (bytes !== outBuffer.length) {
+        console.log(
+          `failed to completely send all of buffer. Sent: ${bytes}. Buffer length: ${outBuffer.length}`
+        );
+      }
     }
-    else if (bytes !== outBuffer.length) {
-      console.log(`failed to completely send all of buffer. Sent: ${bytes}. Buffer length: ${outBuffer.length}`);
-    }
-  });
+  );
 }
 
 server.bind(26760);
@@ -256,19 +297,19 @@ server.bind(26760);
 
 const wss = new WebSocket.Server({ port: 1337 });
 
-wss.on('connection', function connection(ws) {
+wss.on("connection", function connection(ws) {
   console.log("WS Connected");
   phoneIsConnected = true;
-  ws.on('message', function incoming(message) {
+  ws.on("message", function incoming(message) {
     // console.log(message);
     data = JSON.parse(message);
-    Report(long.fromNumber(data.ts, true), {x:0,y:0,z:0}, data.gyro);
+    Report(long.fromNumber(data.ts, true), { x: 0, y: 0, z: 0 }, data.gyro);
   });
-  ws.on( "error", () => {
+  ws.on("error", () => {
     phoneIsConnected = false;
     console.log("WS ERROR");
   });
-  ws.on( "close", () => {
+  ws.on("close", () => {
     phoneIsConnected = false;
     console.log("WS Disconnected");
   });
@@ -276,39 +317,39 @@ wss.on('connection', function connection(ws) {
 
 /////////////////////////////////////////////////
 
-http.createServer(function(request, response) {
-  var filePath = path.join(__dirname, 'static.html');
-  var stat = fs.statSync(filePath);
+http
+  .createServer(function(request, response) {
+    var filePath = path.join(__dirname, "static.html");
+    var stat = fs.statSync(filePath);
 
-  response.writeHead(200, {
-      'Content-Type': 'text/html',
-      'Content-Length': stat.size
-  });
+    response.writeHead(200, {
+      "Content-Type": "text/html",
+      "Content-Length": stat.size
+    });
 
-  var readStream = fs.createReadStream(filePath);
-  readStream.pipe(response);
-}).listen(8080,function(){
-  console.log(`
+    var readStream = fs.createReadStream(filePath);
+    readStream.pipe(response);
+  })
+  .listen(8080, function() {
+    console.log(`
     ----------------------------------------
-        打包版本1.3 by 期待的愿望2013
+              Version 1.3 by hjmmc
     -----------------------------------------
 
-##使用方法
+##Usage
 
-1.打开你 cemu 所在目录下方的 cemuhook.ini，在里面，把 [Input] 以及下方的内容替换成如下
-[Input] 
-motionSource = DSU1 
-motionSourceIsBtnSource = false 
-serverIP = 127.0.0.1 
-serverPort = 26760
+1.Run Cemu.exe and Checked Options->GamePad mation source->DSU1->By Slot
 
-2.手机连接WiFi，在自带浏览器上打开以下其中网址。`)
-  var interfaces=require('os').networkInterfaces()
-  for(var k in interfaces){
-    for(var i in interfaces[k]){
-      if(interfaces[k][i].family=='IPv4'&&interfaces[k][i].address!='127.0.0.1'){
-        console.log('http://'+interfaces[k][i].address+':8080')
+2.Use your phone browser open the following url`);
+    var interfaces = require("os").networkInterfaces();
+    for (var k in interfaces) {
+      for (var i in interfaces[k]) {
+        if (
+          interfaces[k][i].family == "IPv4" &&
+          interfaces[k][i].address != "127.0.0.1"
+        ) {
+          console.log("http://" + interfaces[k][i].address + ":8080");
+        }
       }
     }
-  }
-});
+  });

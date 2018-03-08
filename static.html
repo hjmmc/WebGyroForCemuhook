@@ -4,39 +4,42 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <title>Gyro Client</title>
-    <style>
-    </style>
  </head>
   <body>
-    <p>Version: 1.3 (打包by 贴吧：期待的愿望2013)</p>
-    <p>Tips：使用时，请保持屏幕常亮。</p>
+    <p>Version: 1.3 (by hjmmc)</p>
+    <p>Tips：Please keep the screen bright when you use it.</p>
     <div>
-      灵敏度：<input id="scale" type="number" onchange="scaleChange(this.value)" value=""><br>
-      屏幕方向：<select id="screen" onchange="screenChange(this.value)">
-                  <option value="h">横屏</option>
-                  <option value="v">竖屏</option>
+      Sensitivity:<input id="scale" type="number" onchange="scaleChange(this.value)" value=""><br>
+      Screen direction:
+      <select id="screen" onchange="screenChange(this.value)">
+          <option value="h">horizontal</option>
+          <option value="v">vertical</option>
       </select>
     </div>
-    <p>状态：<label id="lblConnected">已连接</label></p>
+    <p>WebSocket State：<label id="lblConnected">Connected</label></p>
     <p id="x">x:0</p>
     <p id="y">y:0</p>
     <p id="z">z:0</p>
-    <p id="s">当前灵敏度：1</p>
-    <p>IOS默认灵敏度为1，经测试安卓机子用Chrome浏览器打开也能正常使用，灵敏度大概设置为60（参考值），请自行下载PadTest进行测试</p>
+    <p id="s">Current sensitivity:1</p>
+    <p>IOS default sensitivity is 1，Android sensitivity is about 60（reference value）</p>
+    </body>
+
     <script>
-      if(!localStorage)
-        localStorage={}
-      var scale = localStorage.scaleV13||1;
-      var screen = localStorage.screen||'v';
-      document.getElementById("scale").value=scale
-      document.getElementById("screen").value=screen
-      function scaleChange(val){
-        scale=val
-        localStorage.scaleV13=val
+      if (!localStorage)
+        localStorage = {}
+      var scale = localStorage.scaleV13 || 1;
+      var screen = localStorage.screen || 'v';
+      document.getElementById("scale").value = scale
+      document.getElementById("screen").value = screen
+
+      function scaleChange(val) {
+        scale = val
+        localStorage.scaleV13 = val
       }
-       function screenChange(val){
-        screen=val
-        localStorage.screen=val
+
+      function screenChange(val) {
+        screen = val
+        localStorage.screen = val
       }
 
       var bar = window.location.href;
@@ -47,28 +50,28 @@
         window.document.getElementById("lblConnected").textContent = "已连接";
         window.ondevicemotion = function(motion) {
           //x(red) z(blue) y(green) 
-          let gyroV={
-              x: scale * motion.rotationRate.alpha,
-              z: scale * motion.rotationRate.beta,
-              y: -scale * motion.rotationRate.gamma,
-            }
-          let gyroH={
-              z: scale * motion.rotationRate.alpha,
-              x: -scale * motion.rotationRate.beta,
-              y: -scale * motion.rotationRate.gamma,
-            }
+          let gyroV = {
+            x: scale * motion.rotationRate.alpha,
+            z: scale * motion.rotationRate.beta,
+            y: -scale * motion.rotationRate.gamma,
+          }
+          let gyroH = {
+            z: scale * motion.rotationRate.alpha,
+            x: -scale * motion.rotationRate.beta,
+            y: -scale * motion.rotationRate.gamma,
+          }
 
-          document.getElementById("x").textContent='x:'+gyroV.x
-          document.getElementById("y").textContent='y:'+gyroV.y
-          document.getElementById("z").textContent='z:'+gyroV.z
-          document.getElementById("s").textContent='当前灵敏度：'+scale
+          document.getElementById("x").textContent = 'x:' + gyroV.x
+          document.getElementById("y").textContent = 'y:' + gyroV.y
+          document.getElementById("z").textContent = 'z:' + gyroV.z
+          document.getElementById("s").textContent = '当前灵敏度：' + scale
           let data = {
-            ts: parseInt(Date.now()*1000),
-            gyro: screen=='v'?gyroV:gyroH,
-            acceleration:{
-              x:0,
-              y:0,
-              z:0
+            ts: parseInt(Date.now() * 1000),
+            gyro: screen == 'v' ? gyroV : gyroH,
+            acceleration: {
+              x: 0,
+              y: 0,
+              z: 0
             }
           }
           ws.send(JSON.stringify(data, function(key, val) {
@@ -77,10 +80,9 @@
         };
       };
 
-      ws.onclose =function(){
+      ws.onclose = function() {
         alert('连接已断开，请刷新界面重试')
-         window.document.getElementById("lblConnected").textContent = "连接已断开！请刷新界面重试。";
+        window.document.getElementById("lblConnected").textContent = "连接已断开！请刷新界面重试。";
       }
     </script>
-  
-</body></html>
+</html>
