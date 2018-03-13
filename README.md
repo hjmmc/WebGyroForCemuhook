@@ -10,7 +10,7 @@ Double click Gyro.exe
 
 Run Cemu.exe and Checked Options->GamePad mation source->DSU1->By Slot
 
-Use your phone browser open http://your.pc.ip:8080 (example http://192.168.1.100:8080)
+Use your phone's browser (safair or chrome) open http://your.pc.ip:8080 (example http://192.168.1.100:8080)
 
 Load the game and enjoy it~
 

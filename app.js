@@ -333,14 +333,14 @@ http
   .listen(8080, function() {
     console.log(`
     ----------------------------------------
-              Version 1.3 by hjmmc
+              Version 1.4 by hjmmc
     -----------------------------------------
 
 ##Usage
 
 1.Run Cemu.exe and Checked Options->GamePad mation source->DSU1->By Slot
 
-2.Use your phone browser open the following url`);
+2.Use your phone‘s browser (safair or chrome) open the following url`);
     var interfaces = require("os").networkInterfaces();
     for (var k in interfaces) {
       for (var i in interfaces[k]) {
