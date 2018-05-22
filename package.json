@@ -2,7 +2,7 @@
   "name": "web-gyro-for-cemuhook",
   "version": "1.0.0",
   "description": "Use web ondevicemotion event data provided to cemuhook",
-  "main": "app.js",
+  "bin": "app.js",
   "scripts": {
     "start": "node app.js"
   },
@@ -24,7 +24,6 @@
   },
   "homepage": "https://github.com/hjmmc/WebGyroForCemuhook#readme",
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
     "crc": "^3.5.0",
     "long": "^3.2.0",
     "ws": "^4.0.0"

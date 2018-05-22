@@ -18,6 +18,4 @@ Load the game and enjoy it~
 
 > [iOSGyroForCemuhook](https://github.com/denismr/iOSGyroForCemuhook)
 
-> [jxcore](https://github.com/jxcore)
-
-> [babeljs](http://babeljs.io/)
+> [pkg](https://github.com/zeit/pkg)

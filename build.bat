@@ -1,3 +1,1 @@
-del Gyro.jxp
-del Gyro.exe
-jx package app.js Gyro --native
+pkg -t node9-win-x86 .

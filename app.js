@@ -1,4 +1,3 @@
-require("babel-polyfill");
 const WebSocket = require("ws");
 const dgram = require("dgram");
 const crc = require("crc");
@@ -99,14 +98,12 @@ server.on("listening", () => {
 });
 
 server.on("message", (data, rinfo) => {
-  if (
-    !(
+  if (!(
       data[0] === char("D") &&
       data[1] === char("S") &&
       data[2] === char("U") &&
       data[3] === char("C")
-    )
-  )
+    ))
     return;
   let index = 4;
 
@@ -295,7 +292,9 @@ server.bind(26760);
 
 /////////////////////////////////////////////////
 
-const wss = new WebSocket.Server({ port: 1337 });
+const wss = new WebSocket.Server({
+  port: 1337
+});
 
 wss.on("connection", function connection(ws) {
   console.log("WS Connected");
@@ -303,7 +302,11 @@ wss.on("connection", function connection(ws) {
   ws.on("message", function incoming(message) {
     // console.log(message);
     data = JSON.parse(message);
-    Report(long.fromNumber(data.ts, true), { x: 0, y: 0, z: 0 }, data.gyro);
+    Report(long.fromNumber(data.ts, true), {
+      x: 0,
+      y: 0,
+      z: 0
+    }, data.gyro);
   });
   ws.on("error", () => {
     phoneIsConnected = false;
@@ -317,8 +320,7 @@ wss.on("connection", function connection(ws) {
 
 /////////////////////////////////////////////////
 
-http
-  .createServer(function(request, response) {
+http.createServer(function(request, response) {
     var filePath = path.join(__dirname, "static.html");
     var stat = fs.statSync(filePath);
 
@@ -333,7 +335,7 @@ http
   .listen(8080, function() {
     console.log(`
     ----------------------------------------
-              Version 1.4 by hjmmc
+              Version 1.5 by hjmmc
     -----------------------------------------
 
 ##Usage
@@ -353,3 +355,8 @@ http
       }
     }
   });
+
+
+require('process').on('uncaughtException', function(err) {
+  console.log(err)
+});
