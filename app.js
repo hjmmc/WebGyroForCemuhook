@@ -6,6 +6,11 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 
+var https = require('https');
+var privateKey = fs.readFileSync('ssl/private.pem', 'utf8');
+var certificate = fs.readFileSync('ssl/file.crt', 'utf8');
+var credentials = { key: privateKey, cert: certificate };
+
 const server = dgram.createSocket("udp4");
 
 function char(a) {
@@ -99,11 +104,11 @@ server.on("listening", () => {
 
 server.on("message", (data, rinfo) => {
   if (!(
-      data[0] === char("D") &&
-      data[1] === char("S") &&
-      data[2] === char("U") &&
-      data[3] === char("C")
-    ))
+    data[0] === char("D") &&
+    data[1] === char("S") &&
+    data[2] === char("U") &&
+    data[3] === char("C")
+  ))
     return;
   let index = 4;
 
@@ -159,7 +164,7 @@ server.on("message", (data, rinfo) => {
     let flags = data[index++];
     let idToRRegister = data[index++];
     let macToRegister = ["", "", "", "", "", ""];
-    for (let i = 0; i < macToRegister.length; i++, index++) {
+    for (let i = 0; i < macToRegister.length; i++ , index++) {
       macToRegister[i] = `${data[index] < 15 ? "0" : ""}${data[index].toString(
         16
       )}`;
@@ -291,36 +296,8 @@ function Report(motionTimestamp, accelerometer, gyro) {
 server.bind(26760);
 
 /////////////////////////////////////////////////
-
-const wss = new WebSocket.Server({
-  port: 1337
-});
-
-wss.on("connection", function connection(ws) {
-  console.log("WS Connected");
-  phoneIsConnected = true;
-  ws.on("message", function incoming(message) {
-    // console.log(message);
-    data = JSON.parse(message);
-    Report(long.fromNumber(data.ts, true), {
-      x: 0,
-      y: 0,
-      z: 0
-    }, data.gyro);
-  });
-  ws.on("error", () => {
-    phoneIsConnected = false;
-    console.log("WS ERROR");
-  });
-  ws.on("close", () => {
-    phoneIsConnected = false;
-    console.log("WS Disconnected");
-  });
-});
-
-/////////////////////////////////////////////////
-
-http.createServer(function(request, response) {
+var httpsServer = https.createServer(credentials,
+  function (request, response) {
     var filePath = path.join(__dirname, "static.html");
     var stat = fs.statSync(filePath);
 
@@ -332,8 +309,26 @@ http.createServer(function(request, response) {
     var readStream = fs.createReadStream(filePath);
     readStream.pipe(response);
   })
-  .listen(8080, function() {
-    console.log(`
+httpsServer.listen(8443, function () {
+  console.log('https server started')
+});
+
+var httpServer = http.createServer(
+  function (request, response) {
+    var filePath = path.join(__dirname, "static.html");
+    var stat = fs.statSync(filePath);
+
+    response.writeHead(200, {
+      "Content-Type": "text/html",
+      "Content-Length": stat.size
+    });
+
+    var readStream = fs.createReadStream(filePath);
+    readStream.pipe(response);
+  })
+
+httpServer.listen(8080, function () {
+  console.log(`
     ----------------------------------------
               Version 1.5 by hjmmc
     -----------------------------------------
@@ -343,20 +338,64 @@ http.createServer(function(request, response) {
 1.Run Cemu.exe and Checked Options->GamePad mation source->DSU1->By Slot
 
 2.Use your phone‘s browser (safair or chrome) open the following url`);
-    var interfaces = require("os").networkInterfaces();
-    for (var k in interfaces) {
-      for (var i in interfaces[k]) {
-        if (
-          interfaces[k][i].family == "IPv4" &&
-          interfaces[k][i].address != "127.0.0.1"
-        ) {
-          console.log("http://" + interfaces[k][i].address + ":8080");
-        }
+  var interfaces = require("os").networkInterfaces();
+  for (var k in interfaces) {
+    for (var i in interfaces[k]) {
+      if (
+        interfaces[k][i].family == "IPv4" &&
+        interfaces[k][i].address != "127.0.0.1"
+      ) {
+        console.log("http://" + interfaces[k][i].address + ":8080");
       }
     }
+  }
+  console.log(`
+3.Note: If you are using ios 12.2+, please enable 'Settings > Safari > Motion and Orientation access' and use HTTPS to access`)
+  var interfaces = require("os").networkInterfaces();
+  for (var k in interfaces) {
+    for (var i in interfaces[k]) {
+      if (
+        interfaces[k][i].family == "IPv4" &&
+        interfaces[k][i].address != "127.0.0.1"
+      ) {
+        console.log("https://" + interfaces[k][i].address + ":443");
+      }
+    }
+  }
+});
+
+
+
+
+/////////////////////////////////////////////////
+function createWss(server) {
+  var wss = new WebSocket.Server({ server: server });
+  wss.on("connection", function connection(ws) {
+    console.log("WS Connected");
+    phoneIsConnected = true;
+    ws.on("message", function incoming(message) {
+      // console.log(message);
+      data = JSON.parse(message);
+      Report(long.fromNumber(data.ts, true), {
+        x: 0,
+        y: 0,
+        z: 0
+      }, data.gyro);
+    });
+    ws.on("error", () => {
+      phoneIsConnected = false;
+      console.log("WS ERROR");
+    });
+    ws.on("close", () => {
+      phoneIsConnected = false;
+      console.log("WS Disconnected");
+    });
   });
+}
 
+createWss(httpServer)
+createWss(httpsServer)
 
-require('process').on('uncaughtException', function(err) {
+require('process').on('uncaughtException', function (err) {
   console.log(err)
 });
