@@ -1,4 +1,3 @@
-const WebSocket = require("ws");
 const dgram = require("dgram");
 const crc = require("crc");
 const long = require("long");
@@ -358,7 +357,7 @@ httpServer.listen(8080, function () {
         interfaces[k][i].family == "IPv4" &&
         interfaces[k][i].address != "127.0.0.1"
       ) {
-        console.log("https://" + interfaces[k][i].address + ":443");
+        console.log("https://" + interfaces[k][i].address + ":8443");
       }
     }
   }
@@ -369,24 +368,23 @@ httpServer.listen(8080, function () {
 
 /////////////////////////////////////////////////
 function createWss(server) {
-  var wss = new WebSocket.Server({ server: server });
+  var wss = require('socket.io')(server);
   wss.on("connection", function connection(ws) {
     console.log("WS Connected");
     phoneIsConnected = true;
-    ws.on("message", function incoming(message) {
-      // console.log(message);
-      data = JSON.parse(message);
+    ws.on("report", function (msg) {
+      var data = JSON.parse(msg)
       Report(long.fromNumber(data.ts, true), {
         x: 0,
         y: 0,
         z: 0
       }, data.gyro);
     });
-    ws.on("error", () => {
-      phoneIsConnected = false;
-      console.log("WS ERROR");
-    });
-    ws.on("close", () => {
+    // ws.on("error", () => {
+    //   phoneIsConnected = false;
+    //   console.log("WS ERROR");
+    // });
+    ws.on("disconnect", () => {
       phoneIsConnected = false;
       console.log("WS Disconnected");
     });

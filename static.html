@@ -5,6 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
   <title>Gyro Client</title>
+  <script src="https://cdn.bootcss.com/socket.io/2.2.0/socket.io.js"></script>
 </head>
 
 <body>
@@ -44,10 +45,8 @@
     localStorage.screen = val
   }
 
-  var wsAddress = (window.location.protocol == 'https:' ? 'wss://' : 'ws://') + window.location.host;
-  console.log(wsAddress);
-  var ws = new WebSocket(wsAddress);
-  ws.onopen = function (ws_evnt) {
+  var ws = io(window.location.protocol+'//'+ window.location.host)
+  ws.on('connect', function (ws_evnt) {
     window.document.getElementById("lblConnected").textContent = "Connected";
     window.ondevicemotion = function (motion) {
       //x(red) z(blue) y(green) 
@@ -75,17 +74,17 @@
           z: 0
         }
       }
-      ws.send(JSON.stringify(data, function (key, val) {
+      ws.emmit('report',JSON.stringify(data, function (key, val) {
         return val.toFixed ? Number(val.toFixed(20)) : val;
       }));
     };
-  };
+  });
 
-  ws.onclose = function () {
+  ws.on('disconnect', function () {
     alert('WebSocket is Disconnecte! Please refresh this page and retry it.')
     window.document.getElementById("lblConnected").textContent =
       "WebSocket is closed! Please refresh this page and retry it.";
-  }
+  })
 </script>
 
 </html>
