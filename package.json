@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node app.js"
   },
+  "pkg": {
+    "assets": "ssl/**/*"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/denismr/iOSGyroForCemuhook.git"

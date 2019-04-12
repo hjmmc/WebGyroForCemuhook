@@ -6,8 +6,8 @@ const fs = require("fs");
 const path = require("path");
 
 var https = require('https');
-var privateKey = fs.readFileSync('ssl/private.pem', 'utf8');
-var certificate = fs.readFileSync('ssl/file.crt', 'utf8');
+var privateKey = fs.readFileSync(__dirname+'/ssl/private.pem', 'utf8');
+var certificate = fs.readFileSync(__dirname+'/ssl/file.crt', 'utf8');
 var credentials = { key: privateKey, cert: certificate };
 
 const server = dgram.createSocket("udp4");
@@ -25,7 +25,7 @@ const MessageType = {
   DSUC_PadDataReq: 0x100002,
   DSUS_PadDataRsp: 0x100002
 };
-const serverID = 0 + Math.floor(Math.random() * 9007199254740992);
+const serverID = 0 + Math.floor(Math.random() * 4294967295);
 console.log(`serverID: ${serverID}`);
 
 var connectedClient = null;
@@ -329,7 +329,7 @@ var httpServer = http.createServer(
 httpServer.listen(8080, function () {
   console.log(`
     ----------------------------------------
-              Version 1.5 by hjmmc
+              Version 1.6 by hjmmc
     -----------------------------------------
 
 ##Usage
