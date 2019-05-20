@@ -1,1 +1,1 @@
-pkg -t node9-win-x86 .
+pkg -t node10-win-x86 .
