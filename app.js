@@ -1,6 +1,5 @@
 const dgram = require("dgram");
 const crc = require("crc");
-const long = require("long");
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
@@ -253,9 +252,9 @@ function Report(motionTimestamp, accelerometer, gyro) {
   outBuffer.writeUInt16LE(0x0000, outIndex, true); // trackpad second y
   outIndex += 2;
 
-  outBuffer.writeUInt32LE(motionTimestamp.low, outIndex, true);
+  outBuffer.writeUInt32LE(parseInt(motionTimestamp.slice(motionTimestamp.length-8),16), outIndex, true);
   outIndex += 4;
-  outBuffer.writeUInt32LE(motionTimestamp.high, outIndex, true);
+  outBuffer.writeUInt32LE(parseInt(motionTimestamp.slice(0,motionTimestamp.length-8),16), outIndex, true);
   outIndex += 4;
 
   outBuffer.writeFloatLE(accelerometer.x, outIndex, true);
@@ -329,7 +328,7 @@ var httpServer = http.createServer(
 httpServer.listen(8080, function () {
   console.log(`
     ----------------------------------------
-              Version 1.6 by hjmmc
+              Version 1.7 by hjmmc
     -----------------------------------------
 
 ##Usage
@@ -374,7 +373,7 @@ function createWss(server) {
     phoneIsConnected = true;
     ws.on("report", function (msg) {
       var data = JSON.parse(msg)
-      Report(long.fromNumber(data.ts, true), {
+      Report((data.ts*1000).toString(16), {
         x: 0,
         y: 0,
         z: 0

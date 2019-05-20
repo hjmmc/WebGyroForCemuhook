@@ -19,7 +19,7 @@ var h,f,l,d=String.fromCharCode;t.exports={version:"2.1.2",encode:a,decode:u}},f
 </head>
 
 <body>
-  <p>Version: 1.6 (by hjmmc)</p>
+  <p>Version: 1.7 (by <a href="https://github.com/hjmmc/WebGyroForCemuhook/releases">hjmmc</a>)</p>
   <p>Tips：Please keep the screen bright when you use it.</p>
   <p>Notice: If you are using <span style="color: red;">ios 12.2+</span>, please enable 'Settings > Safari > Motion and Orientation access' and use HTTPS to access 
   <a style="color: blue" onclick="window.location.href='https://'+window.location.hostname+':8443'">this page</a></p>
@@ -79,7 +79,7 @@ var h,f,l,d=String.fromCharCode;t.exports={version:"2.1.2",encode:a,decode:u}},f
       document.getElementById("z").textContent = 'z:' + gyroV.z
       document.getElementById("s").textContent = 'Current Sensitivity:' + scale
       var data = {
-        ts: parseInt(Date.now() * 1000),
+        ts: new Date().getTime(),
         gyro: screen == 'v' ? gyroV : gyroH,
         acceleration: {
           x: 0,
@@ -87,9 +87,7 @@ var h,f,l,d=String.fromCharCode;t.exports={version:"2.1.2",encode:a,decode:u}},f
           z: 0
         }
       }
-      ws.emit('report',JSON.stringify(data, function (key, val) {
-        return val.toFixed ? Number(val.toFixed(20)) : val;
-      }));
+      ws.emit('report',JSON.stringify(data));
     };
   });
 
