@@ -20,6 +20,10 @@ If you are using ios 12.2+, please enable 'Settings > Safari > Motion and Orient
 
 Since safari's websocket does not support self-signed certificates, when using HTTPS access, socket.io will probably use XHR instead of websocket, which will increase communication latency.
 
+## Test whit PadTest
+
+Download [PadTest_1011.zip](https://files.sshnuke.net/PadTest_1011.zip) form [this page](https://cemuhook.sshnuke.net/padudpserver.html)
+
 ## Quote
 
 > [iOSGyroForCemuhook](https://github.com/denismr/iOSGyroForCemuhook)
