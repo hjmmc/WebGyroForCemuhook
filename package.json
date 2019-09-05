@@ -28,6 +28,7 @@
   "homepage": "https://github.com/hjmmc/WebGyroForCemuhook#readme",
   "dependencies": {
     "crc": "^3.5.0",
+    "request": "^2.88.0",
     "socket.io": "^2.2.0"
   }
 }
