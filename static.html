@@ -46,6 +46,9 @@ var h,f,l,d=String.fromCharCode;t.exports={version:"2.1.2",encode:a,decode:u}},f
 </body>
 
 <script>
+	if(window.location.protocol==='https:'&&window.location.hostname.indexOf('xip.lhjmmc.cn')===-1){
+		alert('Please access https by https://x-x-x-x.xip.lhjmmc.cn:8443')
+	}
   if (!localStorage)
     localStorage = {}
   var scale = localStorage.scaleV13 || 1;
