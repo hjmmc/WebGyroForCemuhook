@@ -359,7 +359,7 @@ async function main() {
   httpServer.listen(8080, function() {
     console.log(`
     ----------------------------------------
-              Version 1.7 by hjmmc
+              Version 1.8 by hjmmc
     -----------------------------------------
 
 ##Usage
