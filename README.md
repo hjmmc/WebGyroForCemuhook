@@ -29,3 +29,14 @@ Download [PadTest_1011.zip](https://files.sshnuke.net/PadTest_1011.zip) form [th
 > [iOSGyroForCemuhook](https://github.com/denismr/iOSGyroForCemuhook)
 
 > [pkg](https://github.com/zeit/pkg)
+
+## Donate
+
+> If you find this project useful, you can buy author a glass of juice 🍹
+
+<details>
+  <summary>Alipay & Wechat</summary>
+    
+  <img src="https://cdn.lhjmmc.cn/alipay.jpg" width="300px"  />
+  <img src="https://cdn.lhjmmc.cn/wx.jpg" width="350px" />
+</details>
