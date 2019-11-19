@@ -19,12 +19,11 @@ var h,f,l,d=String.fromCharCode;t.exports={version:"2.1.2",encode:a,decode:u}},f
 </head>
 
 <body>
-  <p>Version: 1.8 (by <a href="https://github.com/hjmmc/WebGyroForCemuhook/releases">hjmmc</a>)</p>
+  <p>Version: 1.9 (by <a href="https://github.com/hjmmc/WebGyroForCemuhook/releases">hjmmc</a>)</p>
   <p>Tips：Please keep the screen bright when you use it.</p>
   <p>Notice: If you are using <span style="color: red;">ios 12.2+</span>, please enable 'Settings > Safari > Motion and Orientation access' and use HTTPS to access 
   <a style="color: blue" onclick="window.location.href='https://'+window.location.hostname+':8443'">this page</a></p>
-
-
+  <p>If you are using iOS 13+, please click  <button onclick="requestPermission()">allow permission</button></p>
   <p>
   	Use <a href="https://xip.lhjmmc.cn">xip.lhjmmc.cn</a> https cert to slove latency problem. 
   	<span style="font-size: 10px;color:#999;text-decoration:line-through;">Since safari's websocket does not support self-signed certificates, when using HTTPS access, socket.io will probably use XHR instead of websocket, which will increase communication latency.</span>
@@ -46,6 +45,22 @@ var h,f,l,d=String.fromCharCode;t.exports={version:"2.1.2",encode:a,decode:u}},f
 </body>
 
 <script>
+	function requestPermission(){
+		if(window.DeviceMotionEvent&&window.DeviceMotionEvent.requestPermission){
+			window.DeviceMotionEvent.requestPermission().then(function(response) {
+			  if (response === 'granted') {
+			    // permission granted
+			  } else {
+			    // permission not granted
+			    alert('permission not granted!')
+			  }
+			},function(err){
+				alert(err)
+			})
+		}
+	}
+	
+
 	if(window.location.protocol==='https:'&&window.location.hostname.indexOf('xip.lhjmmc.cn')===-1){
 		alert('Please access https by https://x-x-x-x.xip.lhjmmc.cn:8443')
 	}
