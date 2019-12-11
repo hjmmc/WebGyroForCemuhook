@@ -14,11 +14,15 @@ Use your phone's browser (safair or chrome) open http://your.pc.ip:8080 (example
 
 Load the game and enjoy it~
 
-## Notie in IOS 12.2+
+## Notice in IOS 12.2
 
 If you are using ios 12.2+, please enable 'Settings > Safari > Motion and Orientation access' and use HTTPS to access.
 
 Use [xip.lhjmmc.cn](https://xip.lhjmmc.cn) https cert to slove latency problem. ~~Since safari's websocket does not support self-signed certificates, when using HTTPS access, socket.io will probably use XHR instead of websocket, which will increase communication latency.~~
+
+## Notice in IOS 13+
+
+If you are using ios 13+, please use HTTPS for access, make sure the url is https://[you-ip-ip-ip].xip.lhjmmc.cn and the certificate is trusted, and click the allow button to grant page permissions. If permissions is not grant, please restart the browser and try again.
 
 ## Test whit PadTest
 
