@@ -101,8 +101,8 @@ var h,f,l,d=String.fromCharCode;t.exports={version:"2.1.2",encode:a,decode:u}},f
       }
      var acceleratorData = {
         x: motion.accelerationIncludingGravity.x,
-        y: -1 * motion.accelerationIncludingGravity.z,
-        z: -1 * motion.accelerationIncludingGravity.y,
+        y: motion.accelerationIncludingGravity.z,
+        z: motion.accelerationIncludingGravity.y,
     }
       document.getElementById("x").textContent = 'x:' + gyroV.x
       document.getElementById("y").textContent = 'y:' + gyroV.y
