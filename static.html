@@ -36,7 +36,10 @@ var h,f,l,d=String.fromCharCode;t.exports={version:"2.1.2",encode:a,decode:u}},f
       <option value="v">vertical</option>
     </select>
   </div>
-  <p>WebSocket State：<label id="lblConnected">Disconnecte</label></p>
+  <p>WebSocket State：<label id="lblConnected">Disconnected</label></p>
+  <p id="acx">x:0</p>
+  <p id="acy">y:0</p>
+  <p id="acz">z:0</p>
   <p id="x">x:0</p>
   <p id="y">y:0</p>
   <p id="z">z:0</p>
@@ -96,19 +99,23 @@ var h,f,l,d=String.fromCharCode;t.exports={version:"2.1.2",encode:a,decode:u}},f
         x: -scale * motion.rotationRate.beta,
         y: -scale * motion.rotationRate.gamma,
       }
-
+     var acceleratorData = {
+        x: motion.accelerationIncludingGravity.x,
+        y: -1 * motion.accelerationIncludingGravity.z,
+        z: -1 * motion.accelerationIncludingGravity.y,
+    }
       document.getElementById("x").textContent = 'x:' + gyroV.x
       document.getElementById("y").textContent = 'y:' + gyroV.y
       document.getElementById("z").textContent = 'z:' + gyroV.z
+      document.getElementById("acx").textContent = 'acceleration:x:' + acceleratorData.x
+      document.getElementById("acy").textContent = 'acceleration:y:' + acceleratorData.y
+      document.getElementById("acz").textContent = 'acceleration:z:' + acceleratorData.z
       document.getElementById("s").textContent = 'Current Sensitivity:' + scale
       var data = {
         ts: new Date().getTime(),
         gyro: screen == 'v' ? gyroV : gyroH,
-        acceleration: {
-          x: 0,
-          y: 0,
-          z: 0
-        }
+        //acceleration: {x: 0,y: 0,z: 0}
+        acceleratorData
       }
       ws.emit('report',JSON.stringify(data));
     };
