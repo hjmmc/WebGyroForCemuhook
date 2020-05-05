@@ -2,7 +2,7 @@
 
 Use web ondevicemotion event data provided to cemuhook.
 
-added accelation data by me.
+added acceleration data by me.
 
 You can use original version by hjmmc. 
 
