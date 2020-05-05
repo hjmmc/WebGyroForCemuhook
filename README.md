@@ -2,11 +2,26 @@
 
 Use web ondevicemotion event data provided to cemuhook.
 
+added accelation data by me.
+
+You can use original version by hjmmc. 
+
+
+
 ## Usage
 
-Download releases [Gyro.exe](https://github.com/hjmmc/WebGyroForCemuhook/releases)
+~~Download releases [Gyro.exe](https://github.com/hjmmc/WebGyroForCemuhook/releases)~~
 
-Double click Gyro.exe
+~~Double click Gyro.exe~~
+
+Download code and run with Node.js
+
+```
+git clone https://github.com/zxhzxhz/WebGyroForCemuhook.git
+cd WebGyroForCemuhook
+npm install
+npm start
+```
 
 Run Cemu.exe and Checked Options->GamePad mation source->DSU1->By Slot
 
