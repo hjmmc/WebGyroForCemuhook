@@ -93,7 +93,7 @@ async function main() {
   }
 
   function SendPacket(client, data) {
-    let buffer = new Buffer(16);
+    let buffer = new Buffer.alloc(16);
     let index = BeginPacket(buffer, data.length);
     // buffer.fill(data,index);
     buffer = Buffer.concat([buffer, data]);
@@ -171,7 +171,7 @@ async function main() {
       for (let i = 0; i < numOfPadRequests; i++) {
         let requestIndex = data[index + i];
         if (requestIndex !== 0) continue;
-        let outBuffer = new Buffer(16);
+        let outBuffer = new Buffer.alloc(16);
         outBuffer.writeUInt32LE(MessageType.DSUS_PortInfo, 0, true);
         let outIndex = 4;
         outBuffer[outIndex++] = 0x00; // pad id
@@ -200,7 +200,7 @@ async function main() {
       }
       macToRegister = macToRegister.join(":");
 
-      // console.log(`Pad data request (${flags}, ${idToRRegister}, ${macToRegister})`);
+     // console.log(`Pad data request (${flags}, ${idToRRegister}, ${macToRegister})`);
 
       // There is only one controller, so
       if (
@@ -219,7 +219,7 @@ async function main() {
     if (client === null || Date.now() - lastRequestAt > clientTimeoutLimit)
       return;
 
-    let outBuffer = new Buffer(100);
+    let outBuffer = new Buffer.alloc(100);
     let outIndex = BeginPacket(outBuffer);
     outBuffer.writeUInt32LE(MessageType.DSUS_PadDataRsp, outIndex, true);
     outIndex += 4;
@@ -403,11 +403,15 @@ async function main() {
       phoneIsConnected = true;
       ws.on("report", function(msg) {
         var data = JSON.parse(msg)
-        Report((data.ts * 1000).toString(16), {
-          x: 0,
-          y: 0,
-          z: 0
-        }, data.gyro);
+        /*console.log((data.ts * 1000).toString(16));
+        console.log(data.gyro);
+        console.log(data.acceleratorData)*/
+        
+        Report(
+        (data.ts * 1000).toString(16), 
+        data.acceleratorData, 
+        data.gyro
+        );
       });
       // ws.on("error", () => {
       //   phoneIsConnected = false;
